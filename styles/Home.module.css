@@ -12,6 +12,12 @@
   align-items: center;
 }
 
+.connect {
+  display: flex;
+  justify-content: right;
+  width: 100%
+}
+
 .footer {
   display: flex;
   flex: 1;
