@@ -1,18 +1,19 @@
 import { useState, useEffect } from "react";
 import { useWeb3React } from "@web3-react/core";
-import { ethers } from "ethers";
-const contractABI = require("./contract-abi.json");
+import { Birds, Birds__factory } from "../../types/ethers-contracts";
+import { utils } from "ethers";
 const useBirdsContract = () => {
   const contractId = "0x8A48535CD86Abed50b8725BAa9ee205843b64899";
   const contractChainId = +process.env.DEFAULT_CHAIN_ID;
-  const [birdsContract, setBirdsContract] = useState<ethers.Contract>();
+  const [birdsContract, setBirdsContract] = useState<Birds>();
   const [isReady, setIsReady] = useState(false);
 
   const { account, chainId, provider } = useWeb3React();
+
   useEffect(() => {
     if (account && +contractChainId === chainId) {
       const singer = provider.getSigner();
-      const contract = new ethers.Contract(contractId, contractABI, singer);
+      const contract = Birds__factory.connect(contractId, singer);
       setBirdsContract(contract);
       setIsReady(true);
     }
@@ -23,7 +24,7 @@ const useBirdsContract = () => {
 
     if (birdsContract && account) {
       balance = await birdsContract.balanceOf(account);
-      balance = 10 ** 18 * +ethers.utils.formatEther(balance);
+      balance = 10 ** 18 * +utils.formatEther(balance);
     }
 
     return balance;
