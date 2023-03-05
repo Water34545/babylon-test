@@ -2,3 +2,4 @@
 /* tslint:disable */
 /* eslint-disable */
 export { Birds__factory } from "./Birds__factory";
+export { TestContract__factory } from "./TestContract__factory";

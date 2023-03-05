@@ -110,7 +110,10 @@ export const MAINNET_CHAINS: ChainConfig = {
 
 export const TESTNET_CHAINS: ChainConfig = {
   5: {
-    urls: [getInfuraUrlFor("goerli")].filter(Boolean),
+    urls: [
+      getInfuraUrlFor("goerli"),
+      "https://endpoints.omniatech.io/v1/eth/goerli/public",
+    ].filter(Boolean),
     name: "Görli",
   },
   420: {

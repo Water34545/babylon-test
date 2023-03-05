@@ -3,8 +3,12 @@ import Head from "next/head";
 import styles from "../styles/Home.module.css";
 import ConnectButton from "../components/ConnectButton";
 import BirdsList from "../components/BirdsList";
+import EventsList from "../components/EventsList";
+import useTestContract from "../contracts/useTestContract";
 
 const Home: NextPage = () => {
+  const { events } = useTestContract();
+
   return (
     <div className={styles.container}>
       <Head>
@@ -19,6 +23,7 @@ const Home: NextPage = () => {
         </div>
         <h1 className={styles.title}>Welcome to Birds NFTs</h1>
         <div>
+          <EventsList events={events} />
           <BirdsList />
         </div>
       </main>

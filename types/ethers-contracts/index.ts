@@ -2,5 +2,7 @@
 /* tslint:disable */
 /* eslint-disable */
 export type { Birds } from "./Birds";
+export type { TestContract } from "./TestContract";
 export * as factories from "./factories";
 export { Birds__factory } from "./factories/Birds__factory";
+export { TestContract__factory } from "./factories/TestContract__factory";

@@ -1,5 +1,6 @@
-import { hooks, metaMask } from "../../connectors/metaMask";
 import { useEffect } from "react";
+import { hooks, metaMask } from "../../connectors/metaMask";
+import { network } from "../../connectors/network";
 
 const defaultChainId = +process.env.DEFAULT_CHAIN_ID;
 
@@ -8,10 +9,15 @@ const ConnectButton = () => {
   const accounts = useAccounts();
 
   useEffect(() => {
-    if (window && window.ethereum) {
-      void metaMask.connectEagerly();
-    }
+    void network.activate().catch((e) => {
+      console.log("Failed to connect to network", e);
+    });
+    window.ethereum &&
+      void metaMask.connectEagerly().catch(() => {
+        console.log("Failed to connect eagerly to metamask");
+      });
   }, []);
+
   const connect = () => {
     if (window && !window.ethereum) {
       window.open("https://metamask.io/download/", "_blank");
