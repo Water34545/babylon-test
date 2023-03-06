@@ -22,9 +22,13 @@ const useBirdsContract = () => {
   const getBalance = async () => {
     let balance = null;
 
-    if (birdsContract && account) {
-      balance = await birdsContract.balanceOf(account);
-      balance = 10 ** 18 * +utils.formatEther(balance);
+    try {
+      if (birdsContract && account) {
+        balance = await birdsContract.balanceOf(account);
+        balance = 10 ** 18 * +utils.formatEther(balance);
+      }
+    } catch (e) {
+      console.log("getBalance err", e);
     }
 
     return balance;
@@ -34,14 +38,37 @@ const useBirdsContract = () => {
     let tokenUri = null;
 
     if (birdsContract) {
-      const tokenId = await birdsContract.tokenOfOwnerByIndex(account, id);
-      tokenUri = await birdsContract.tokenURI(tokenId);
+      try {
+        const tokenId = await birdsContract.tokenOfOwnerByIndex(account, id);
+        tokenUri = await birdsContract.tokenURI(tokenId);
+      } catch (e) {
+        console.log("getTokenUri err", e);
+      }
     }
 
     return tokenUri;
   };
 
-  return { account, isReady, getBalance, getTokenUri };
+  const approveNFT = async (id: number, testContractId: string) => {
+    let tokenId = undefined;
+    try {
+      tokenId =
+        10 ** 18 *
+        +utils.formatEther(
+          await birdsContract.tokenOfOwnerByIndex(account, id)
+        );
+      const isApproved = await birdsContract.getApproved(tokenId);
+      if (!+utils.formatEther(isApproved)) {
+        const tx = await birdsContract.approve(testContractId, tokenId);
+        await tx.wait();
+      }
+    } catch (e) {
+      console.log("approveNFT err", e);
+    }
+    return tokenId;
+  };
+
+  return { account, isReady, contractId, getBalance, getTokenUri, approveNFT };
 };
 
 export default useBirdsContract;

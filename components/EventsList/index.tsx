@@ -8,7 +8,7 @@ interface IEventsList {
 }
 
 const EventsList: FC<IEventsList> = ({ events }) => {
-  if (events) return <p>Loading events</p>;
+  if (!!!events) return <p>Loading events</p>;
 
   return (
     <table>
@@ -21,7 +21,7 @@ const EventsList: FC<IEventsList> = ({ events }) => {
       </thead>
       <tbody>
         {events.map((event) => (
-          <tr key={event.transactionIndex}>
+          <tr key={event.logIndex}>
             <td>{event.args.from}</td>
             <td>{event.args.collection}</td>
             <td>{10 ** 18 * +utils.formatEther(event.args.identifier)}</td>

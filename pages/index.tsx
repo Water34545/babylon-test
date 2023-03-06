@@ -7,7 +7,7 @@ import EventsList from "../components/EventsList";
 import useTestContract from "../contracts/useTestContract";
 
 const Home: NextPage = () => {
-  const { events } = useTestContract();
+  const { events, claimNFT, contractId } = useTestContract();
 
   return (
     <div className={styles.container}>
@@ -24,7 +24,7 @@ const Home: NextPage = () => {
         <h1 className={styles.title}>Welcome to Birds NFTs</h1>
         <div>
           <EventsList events={events} />
-          <BirdsList />
+          <BirdsList claim={claimNFT} testContractId={contractId} />
         </div>
       </main>
     </div>

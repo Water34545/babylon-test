@@ -4,6 +4,7 @@ import { FC, useEffect, useState } from "react";
 interface IBirdItem {
   id: number;
   getTokenUri: (id: number) => Promise<string>;
+  claimNFT: (id: number) => Promise<void>;
 }
 
 interface BirdAttr {
@@ -17,9 +18,10 @@ interface Bird {
   name: string;
   attributes: BirdAttr[];
 }
-const BirdItem: FC<IBirdItem> = ({ id, getTokenUri }) => {
+const BirdItem: FC<IBirdItem> = ({ id, getTokenUri, claimNFT }) => {
   const [uri, setUri] = useState("");
   const [tokenData, setTokenData] = useState<Bird | null>(null);
+  const [isLoading, setTsLoading] = useState(false);
 
   useEffect(() => {
     const getTokenUriState = async () => {
@@ -34,11 +36,17 @@ const BirdItem: FC<IBirdItem> = ({ id, getTokenUri }) => {
     const getTokenData = async (Uri: string) => {
       const response = await fetch(Uri);
       const tokenData = (await response.json()) as Bird;
-      setTokenData(tokenData);
+      await setTokenData(tokenData);
     };
 
     uri && void getTokenData(uri);
   }, [uri]);
+
+  const claim = async () => {
+    setTsLoading(true);
+    await claimNFT(id);
+    setTsLoading(false);
+  };
 
   if (!tokenData) return <div>Loading your Birds</div>;
 
@@ -57,6 +65,11 @@ const BirdItem: FC<IBirdItem> = ({ id, getTokenUri }) => {
           </li>
         ))}
       </ul>
+      {isLoading ? (
+        "Sending Bird..."
+      ) : (
+        <button onClick={claim}>Claim NFT</button>
+      )}
     </div>
   );
 };

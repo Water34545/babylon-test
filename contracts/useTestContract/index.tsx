@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
   TestContract,
   TestContract__factory,
@@ -18,7 +18,7 @@ const useTestContract = () => {
   const [testContract, setTestContract] = useState<TestContract>();
   const [isReady, setIsReady] = useState(false);
   const [events, setEvents] = useState<TypedEvent<any, IEventsArgs>[] | null>(
-    null
+    []
   );
 
   const { account, chainId, provider } = useWeb3React();
@@ -38,17 +38,40 @@ const useTestContract = () => {
     }
   }, [provider, contractId, account, chainId, contractChainId]);
 
-  useEffect(() => {
-    const getEvents = async () => {
-      const events = await testContract.queryFilter<
-        TypedEvent<any, IEventsArgs>
-      >(testContract.filters.Claimed());
-      setEvents(events);
-    };
-    testContract && getEvents();
+  const getEvents = useCallback(async () => {
+    let events = [];
+    try {
+      events = await testContract.queryFilter<TypedEvent<any, IEventsArgs>>(
+        testContract.filters.Claimed()
+      );
+    } catch (e) {
+      console.log("getEvents err", e);
+    }
+    setEvents(events);
   }, [testContract]);
 
-  return { isReady, events };
+  useEffect(() => {
+    testContract && getEvents();
+  }, [getEvents, testContract]);
+
+  const claimNFT = async (address: string, id: number) => {
+    try {
+      if (account) {
+        const tx = await testContract.claimToken(account, {
+          tokenType: 0,
+          collection: address,
+          identifier: id,
+          amount: 1,
+        });
+        await tx.wait();
+      }
+    } catch (e) {
+      console.log("claimNFT err", e);
+    }
+    void getEvents();
+  };
+
+  return { contractId, isReady, events, claimNFT };
 };
 
 export default useTestContract;
